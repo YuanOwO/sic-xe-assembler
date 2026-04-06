@@ -1,0 +1,18 @@
+# 對所有文字檔使用自動換行符轉換
+* text=auto
+
+# 指定某些副檔名為文字檔，強制 LF 換行
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.tex text eol=lf
+*.txt text eol=lf
+
+# 某些檔案保持原樣（圖片、二進位檔）
+*.png binary
+*.jpg binary
+*.exe binary
+*.pdf binary
+
+# Markdown 與 JSON diff
+*.md   diff=markdown
+*.json diff=json
