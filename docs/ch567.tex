@@ -1,0 +1,71 @@
+% --- 第 5 章：錯誤處理與系統強健性 ---
+\chapter{錯誤處理與系統強健性}
+
+一個成熟的系統程式必須具備優良的容錯能力與錯誤提示機制。
+本專案在多個層面實作了防呆與除錯功能，確保組譯器在遇到不合法的原始碼時，不會發生崩潰（Crash），並能給予開發者明確的錯誤定位。
+
+\section{FSM 語法錯誤捕捉}
+在 \lstinline{parse.c} 中，當狀態機遇到不符合語法規範的字元（例如：未閉合的字串引號、逗號後缺乏第二運算元等），
+狀態會立即轉移至 \lstinline{state_error}。
+此機制能有效隔離錯誤的指令行，避免污染後續的指令解析，並透過 \lstinline{errormsg()} 函式印出具體的錯誤原因與發生的行號。
+
+\section{語意與邏輯錯誤檢查}
+除了語法層面，\lstinline{assemble.c} 亦實作了嚴格的語意檢查：
+\begin{itemize}
+    \item \textbf{未定義符號 (Undefined Symbol)}：
+          在 \lstinline{Pass 2} 階段，若運算元參考了不存在於符號表 (\lstinline{SYMTAB}) 中的標籤，
+          系統將會報錯並終止該行機器碼的生成。
+    \item \textbf{位移越界 (Displacement Out of Bounds)}：
+          當 \lstinline{Format 3} 指令無法使用 \lstinline{PC-Relative} (超出 $-2048 \sim 2047$ 範圍)
+          且無法使用 \lstinline{Base-Relative} 時，系統會主動提示開發者將該指令改寫為 \lstinline{Format 4}。
+\end{itemize}
+
+% --- 第 6 章：結論與心得 ---
+\chapter{結論與心得}
+
+\section{專案總結}
+本專案成功以 C11 標準從零打造了一套功能完整且效能優異的 SIC/XE 組譯器。
+我們不僅落實了經典的兩次掃描（Two-Pass）演算法，
+更透過引入二分搜尋法（Binary Search）與動態字串雜湊表（Hash Table）等資料結構，
+確保了系統在處理大型組合語言專案時的執行效率與擴展性。
+本系統的架構設計具備高度的模組化特徵，是一次對編譯原理與系統軟體（System Software）開發的成功實踐。
+
+\section{開發心得與架構反思}
+回顧開發歷程，本專案最大的技術突破與心得，在於針對語法解析器（\lstinline{parse.c}）的深度重構。
+
+在開發初期，有限狀態機（FSM）的實作採用了傳統的 switch-case 與多層嵌套的 if-else 來控制狀態轉移。
+然而，隨著 SIC/XE 語法規則的擴充（如各種定址前綴與資料型態的判定），主解析迴圈的程式碼迅速膨脹。
+這不僅導致了極高的循環複雜度（Cyclomatic Complexity），也讓後續的除錯與新功能擴充變得寸步難行。
+
+為了解決此一架構瓶頸，我在專案後期導入了「狀態模式（State Pattern）」的物件導向思維，
+利用 C 語言的\textbf{函式指標}（Function Pointer）對 FSM 進行了徹底的重構：
+
+\begin{lstlisting}[language=C, frame=single]
+typedef void* (*StateFunc)(char c, char** l, char** r, Instruction* inst);
+\end{lstlisting}
+
+透過將每一個狀態（如 \lstinline{state_mnem}, \lstinline{state_op1}）獨立實作為
+符合 \lstinline{StateFunc} 簽章的單一函式，原本臃腫的狀態判斷邏輯被完全去耦合。
+主迴圈只需透過函式指標不斷呼叫當前狀態，並接收回傳的下一狀態記憶體位址即可進行推進：
+
+\begin{lstlisting}[language=C, caption={基於函式指標的 FSM 主迴圈}, frame=single]
+while (*r != '\0' && current_state != state_error && current_state != state_done) {
+    // 透過函式指標直接跳轉，徹底消滅了龐大的 switch-case 判斷
+    current_state = (StateFunc)current_state(*r, &l, &r, &inst);
+    
+    if (current_state != last_state) {
+        last_state = current_state;
+        l = r;  // 狀態轉移，更新左邊界
+    }
+    r++; // 推進右邊界
+}
+\end{lstlisting}
+
+\subsection{學習收穫與軟體工程價值}
+
+這次的重構經驗讓我深刻體會到軟體工程中「去耦合（Decoupling）」與「高內聚（High Cohesion）」的實際威力。
+利用函式指標取代條件分支，不僅使程式碼的視覺結構大幅簡化，每一個狀態的邏輯也得以被安全地封裝與隔離。
+
+從底層效能的角度來看，捨棄 switch-case 的條件比對，改由函式指標直接跳轉記憶體位址，
+亦能有效減少編譯器生成的跳躍表（Jump Table）開銷，並降低 CPU 在迴圈中分支預測錯誤（Branch Misprediction）的成本。
+這是我在本次系統程式實作中，認為最具價值且最引以為傲的技術成長。

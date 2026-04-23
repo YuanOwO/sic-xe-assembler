@@ -1,0 +1,34 @@
+\section{指令集與符號表管理等資料結構優化}
+
+在組譯的過程中，資料結構的選擇與搜尋演算法的效率會直接影響組譯器的整體效能。
+為此，本系統針對指令集查表、內部指令結構儲存以及符號表管理，皆導入了高效的演算法與動態資料結構設計。
+
+\subsection{OPTAB 的二分搜尋優化}
+
+\lstinline{SIC/XE} 具備豐富的指令集。
+在 \lstinline{opcode.c} 中，所有的指令皆預先定義於 \lstinline{OPTAB} 靜態陣列（型別為 \lstinline{OpcodeEntry} 結構）中，
+並且已經嚴格依照指令助記符（Mnemonic）的英文字母順序排列。
+
+在 \lstinline{Pass 2} 轉換目的碼時，若採用傳統的線性搜尋將耗費 $O(n)$ 的時間。
+因此，本系統在 \lstinline{searchOpcode} 函式中實作了\textbf{二分搜尋法（Binary Search）}，
+將指令比對的時間複雜度大幅降至 $O(\log n)$，顯著提升了頻繁查表時的執行效率。
+
+\subsection{基於動態陣列的指令列表}
+
+許多傳統或教學用的組譯器實作，常以固定大小的陣列（Fixed-size array）來存放解析後的指令，
+這不僅浪費記憶體，更會導致可處理的程式碼行數受限。
+
+為解決此問題，本專案引入了著名的單一標頭檔函式庫 \lstinline{stb_ds.h}，
+將儲存解析結果的 \lstinline{instructions} 變數建構為\textbf{動態陣列（Stretchy Buffer）}。
+當 Pass 1 逐行解析原始碼時，系統會隨需動態分配並擴充陣列容量。
+此設計徹底解除了檔案大小的硬性上限，使組譯器具備高度的擴展性。
+
+\subsection{符號表的高效雜湊表實作}
+
+符號表（Symbol Table）扮演著串聯 Pass 1 與 Pass 2 的關鍵角色。
+系統必須在 Pass 1 中頻繁寫入新標籤與位址，並在 Pass 2 遇到相對定址或直接定址時進行大量的位址查詢。
+
+為避免線性搜尋造成的效能瓶頸，本系統同樣利用了 \lstinline{stb_ds.h} 所提供的\textbf{字串雜湊表（String Hash Map）} 機制
+來實作 \lstinline{symbolTable}。
+透過 Hash Table，我們能以平均時間複雜度 $O(1)$ 的極高效率完成符號的「重複定義檢查」與「位址查找」，
+確保組譯器在處理包含大量標籤的大型組合語言專案時，依然能保持優異的運算效能。

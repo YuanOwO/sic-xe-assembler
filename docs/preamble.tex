@@ -1,0 +1,230 @@
+\usepackage{amsmath, amssymb, amsthm}       % 美國數學學會
+\usepackage[CheckSingle, CJKmath]{xeCJK}    % 中文
+\usepackage{fontspec}                       % 字型配置
+\usepackage{geometry}                       % 版面配置
+\usepackage[nocheck]{fancyhdr}              % 頁首頁尾
+\usepackage{color}                          % 顏色
+\usepackage[x11names]{xcolor}               % 更多顏色
+\usepackage{datetime2}                      % 日期、時間
+\usepackage{listings}                       % 顯示 code 用的
+\usepackage{titlesec}                       % 標題格式控制
+\usepackage{tikz}                           % 畫圖
+\usepackage{enumerate}                      % 列舉環境
+\usepackage{enumitem}                       % 自訂列舉環境
+\usepackage{ulem}                           % 文字底線、刪除線
+\usepackage{graphicx}                       % 插入圖片
+\usepackage{multicol}                       % 多欄排版
+\usepackage{hyperref}                       % 超連結
+\usepackage{subcaption}                     % 子圖
+\usepackage{cancel}                         % 取消線
+\usepackage{multirow}                       % 表格合併列
+\usepackage{float}                          % 浮動物件位置強制
+\usepackage{notomath}                       % Noto 數學字體
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setmainfont{Noto Serif}  % 主要字體
+
+\setmonofont{Menlo}  % 等寬字體
+
+\setCJKmainfont{Noto Serif TC}[  % 中文主要字體
+    ItalicFont     = *-Regular, % 中文沒有斜體
+    BoldItalicFont = *-Bold,    % 中文沒有斜體
+]
+
+\setCJKmonofont{Noto Sans TC}[  % 中文等寬字體
+    ItalicFont     = *-Regular, % 中文沒有斜體
+    BoldItalicFont = *-Bold,    % 中文沒有斜體
+]
+
+\newCJKfontfamily{\kaifont}{Kaiti TC}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 彩色模式
+\newcommand{\keywordcolor}{\color{Blue1}}
+\newcommand{\identifiercolor}{\color{black}}
+\newcommand{\commentcolor}{\color{Red4}}
+\newcommand{\stringcolor}{\color{Green4}}
+
+% % 黑白模式
+% \renewcommand{\keywordcolor}{\color{black}}
+% \renewcommand{\identifiercolor}{\color{black}}
+% \renewcommand{\commentcolor}{\color{black!70}}
+% \renewcommand{\stringcolor}{\color{black!55}}
+
+\makeatletter
+\lst@CCPutMacro\lst@ProcessOther {"2D}{\lst@ttfamily{-{}}{-{}}}
+\@empty\z@\@empty
+\makeatother
+
+\lstset{
+    % language=C,                             % Code 的語言
+    numbers=none,                           % 行號的位置
+    numberstyle=\footnotesize,              % 行號的字型和大小
+    stepnumber=1,                           % 顯示行號的間隔
+    numbersep=5pt,                          % 行號跟 code 的距離
+    showspaces=false,                       % 顯示空白 (使用特別的底線記號)
+    showtabs=false,                         % 顯示 Tab
+    showstringspaces=false,                 % 顯示字串的空白
+    tabsize=2,                              % Tab 的寬度
+    frame=leftline,                         % adds a frame around the code
+    captionpos=b,                           % sets the caption-position to bottom
+    breaklines=true,                        % sets automatic line breaking
+    breakatwhitespace=false,                % sets if automatic breaks should only happen at whitespace
+    escapeinside={\%*}{*)},                 % if you want to add a comment within your code
+    morekeywords={*},                       % 自訂的 Keywords
+    basicstyle=\footnotesize\ttfamily,                   % 基本的字型和大小
+    backgroundcolor=\color{white},          % 背景顏色
+    keywordstyle=\bfseries\keywordcolor,    % Keywords 的字型
+    identifierstyle=\identifiercolor,       % 標示符的字型
+    commentstyle=\itshape\commentcolor,     % 註解的字型
+    stringstyle=\itshape\stringcolor,       % 字串的字型
+    % otherkeywords={mat, vec, vector},       % 其他的 Keywords
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ===== 頁面設定 =====
+\geometry{a4paper}                      % A4 紙
+% \geometry{includehead}                  % 內文區塊包含頁首，沒有頁尾、旁注
+\geometry{headsep=6mm}                  % 頁首與內文距離稍微拉開
+\geometry{vmargin=1in, hmargin=1in}     % 上下左右邊界 1 吋
+
+% ===== 行距與段落 =====
+\renewcommand{\baselinestretch}{1.2}    % 正文行距 1.2 倍
+\setlength{\parskip}{1.5ex}             % 段落間距略增，讓段落清楚分隔
+% \setlength{\parindent}{0pt}             % 段落首行縮排，可依喜好調整
+
+% ===== Chapter -> Section 風格 =====
+\titleformat{\chapter}
+{\normalfont\Large\bfseries}   % 原 section 大小
+{\thechapter}
+{1em}
+{\thispagestyle{fancy}}
+
+\titlespacing{\chapter}{0pt}{-24pt}{8pt}
+
+\renewcommand{\chaptermark}[1]{%
+    \markboth{\thechapter.\ #1}{}%
+}
+
+% ===== Section -> Subsection 風格 =====
+\titleformat{\section}
+{\normalfont\large\bfseries}   % 原 subsection 大小
+{\thesection}
+{1em}
+{}
+
+\titlespacing{\section}{0pt}{8pt}{6pt}
+
+% ===== Subsection -> Subsubsection 風格 =====
+\titleformat{\subsection}
+{\normalfont\normalsize\bfseries}  % 原 subsubsection 大小
+{\thesubsection}
+{1em}
+{}
+
+\titlespacing{\subsection}{0pt}{6pt}{4pt}
+
+% ===== 表格列高 =====
+% \renewcommand{\arraystretch}{1.5}       % 表格列高 1.5 倍
+\setlength{\tabcolsep}{1.25ex}          % 表格欄寬
+
+
+% \titlespacing{\section}{0pt}{12pt}{6pt}
+% \titlespacing{\subsection}{0pt}{6pt}{4pt}
+% \titlespacing{\subsubsection}{0pt}{4pt}{2pt}
+
+\XeTeXlinebreaklocale "zh"          % 中文自動換行
+\XeTeXlinebreakskip = 0pt plus 1pt  % 設定段落之間的距離
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hypersetup{
+    colorlinks=true,         % 啟用顏色連結
+    linkcolor=red,           % 內部連結顏色
+    filecolor=green,         % 檔案連結顏色
+    urlcolor=blue,           % 網址顏色
+    pdfborder={0 0 1}        % 設定邊框樣式（0 0 1 表示只有底部有邊框）
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+
+% 數域
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\complex}{\mathbb{C}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\naturals}{\mathbb{N}}
+
+% 科學記號
+\newcommand{\sci}[2]{#1 \times 10^{#2}}
+
+% 常用符號
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\inner}[2]{\left\langle #1, #2 \right\rangle}
+
+% 向量、矩陣
+\newcommand{\mat}[1]{\boldsymbol{#1}}
+\newcommand{\identity}{\mat{I}}
+\newcommand{\zero}{\mat{0}}
+\newcommand{\jacobian}{\mat{J}}
+
+\newcommand{\eps}{\varepsilon}
+
+\newcommand{\bigO}[1]{O\left( #1 \right)}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 允許跨頁的多行公式
+\allowdisplaybreaks
+
+% 調整數學模式下的行距
+\setlength{\abovedisplayskip}{8pt}
+\setlength{\belowdisplayskip}{8pt}
+\setlength{\abovedisplayshortskip}{4pt}
+\setlength{\belowdisplayshortskip}{4pt}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\renewcommand{\maketitle}{
+    \thispagestyle{empty} % 第一頁不要頁眉
+    \begin{center}
+        \kaifont
+
+        \vspace*{\fill}
+
+        {\fontsize{40}{48} \selectfont \@title \par}
+
+        \vspace*{\fill}
+
+        {\large
+            姓名：黃俊源 \\
+            學號：01257128 \\
+            日期：\@date \par
+        }
+
+        \newpage
+    \end{center}
+}
+\makeatother
+
+% quote 環境改用楷體
+\makeatletter
+\renewenvironment{quote}
+{\list{}{\rightmargin\leftmargin}%
+    \item\relax\kaifont}  % 加上 \kaifont
+{\endlist}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,55 @@
+\chapter{本作業實現的指令表}
+
+\section{指令表總覽}
+
+\begin{table}[hbtp]
+    \centering
+    \ttfamily
+    \caption{SIC/XE 指令表總覽}
+    \label{tab:opcode_overview}
+    \begin{tabular}{|c|cccc||c|cccc|}
+        \hline
+           & x0   & x4   & x8   & xC   &    & x0    & x4     & x8     & xC   \\
+        \hline
+        0x & LDA  & LDX  & LDL  & STA  & 8x & STF   & STT    & COMPF  &      \\
+        1x & STX  & STL  & ADD  & SUB  & 9x & ADDR  & SUBR   & MULR   & DIVR \\
+        2x & MUL  & DIV  & COMP & TIX  & Ax & COMPR & SHIFTL & SHIFTR & RMO  \\
+        3x & JEQ  & JGT  & JLT  & J    & Bx & SVC   & CLEAR  & TIXR   &      \\
+        4x & AND  & OR   & JSUB & RSUB & Cx & FLOAT & FIX    & NORM   &      \\
+        5x & LDCH & STCH & ADDF & SUBF & Dx & LPS   & STI    & RD     & WD   \\
+        6x & MULF & DIVF & LDB  & LDS  & Ex & TD    &        & STSW   & SSK  \\
+        7x & LDF  & LDT  & STB  & STS  & Fx & SIO   & HIO    & TIO    &      \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\section{SIC/XE 指令表}
+
+本組譯器實作支援所有的 SIC/XE 指令表，詳細請見老師提供的 SIC\_Inst\_Table.pdf
+
+
+\section{實作的假指令}
+
+在本組譯器的實作中，除了支援標準的 SIC/XE 指令外，我們還實作了一些假指令（Assembler directives）以提升程式撰寫的便利性。
+這些假指令在組譯過程中會被轉換為一系列的實際機器指令，以達到特定的功能。
+我們實作的假指令列表如表 \ref{tab:directives} 所示，涵蓋了常見的資料定義、空間保留以及程式結構控制等功能。
+
+\begin{table}[hbtp]
+    \centering
+    \caption{實作的假指令表}
+    \label{tab:directives}
+    \begin{tabular}{|c|l|}
+        \hline
+        假指令名稱              & 功能說明                     \\
+        \hline
+        \lstinline{BASE}   & 設定基底地址，用於相對定址模式的位移計算     \\
+        \lstinline{NOBASE} & 取消基底地址設定，回復到預設的絕對定址模式    \\
+        \lstinline{START}  & 指定程式的起始地址，通常用於程式的入口點     \\
+        \lstinline{END}    & 標示程式結束，並可指定程式入口點         \\
+        \lstinline{BYTE}   & 定義一個字節常數，並將其存入記憶體        \\
+        \lstinline{WORD}   & 定義一個字（通常為3字節）常數，並將其存入記憶體 \\
+        \lstinline{RESB}   & 保留指定數量的字節空間，通常用於宣告變數或緩衝區 \\
+        \lstinline{RESW}   & 保留指定數量的字空間，通常用於宣告變數或緩衝區  \\
+        \hline
+    \end{tabular}
+\end{table}

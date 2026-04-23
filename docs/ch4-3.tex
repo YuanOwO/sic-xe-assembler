@@ -1,0 +1,29 @@
+\subsection{定址模式與位移計算}
+
+這是在 Pass 2 中最具挑戰性的核心。
+對於 Format 3 與 Format 4 指令，組譯器必須計算六個控制位元（\lstinline{n, i, x, b, p, e}）以及運算元的位移量。
+
+\subsubsection{PC-Relative 定址模式}
+
+預設情況下，Format 3 指令優先採用 PC 相對定址。
+設目標位址為 $TA$ (Target Address)，當前程式計數器為 $PC$（即下一行指令的起始位址），位移量 $disp$ 的計算公式為：
+$$ disp = TA - PC $$
+
+根據 SIC/XE 架構規範，12 位元的 $disp$ 必須落於以下範圍：
+$$ -2048 \le disp \le 2047 $$
+
+若計算出的 $disp$ 符合此區間，則設定 \lstinline{p=1, b=0}，並將其轉換為二進位補數（2's complement）填入目的碼。
+
+\subsubsection{Base-Relative 定址模式}
+
+當 $disp$ 超出 PC-Relative 的容許範圍時，系統會自動退格嘗試 Base 相對定址
+（前提是開發者有使用 \lstinline{BASE} 假指令設定 Base 暫存器）。
+其計算公式為：
+$$ disp = TA - Base $$
+
+此時位移值為無號整數（Unsigned），容許範圍為：
+$$ 0 \le disp \le 4095 $$
+
+若符合條件，則設定 \lstinline{b=1, p=0}。
+若以上兩者皆不符合，系統將報出「Displacement out of bounds」錯誤，
+提示使用者應改用 Format 4 指令。

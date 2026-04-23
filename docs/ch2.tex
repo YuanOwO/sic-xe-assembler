@@ -1,0 +1,46 @@
+\chapter{系統架構設計}
+本專案採用高度模組化的 C 語言專案標準結構，將系統核心邏輯、資料結構定義與測試驗證徹底分離，以確保程式碼的高可讀性與擴展性。
+
+\section{專案目錄結構設計}
+為了有效管理大型專案，本組譯器的原始碼與資源依照功能劃分至不同目錄中：
+\begin{itemize}
+    \item \lstinline{src/}：存放所有系統核心運算的 C 語言實作檔（如 \lstinline{main.c}, \lstinline{assemble.c}, \lstinline{parse.c} 等）。
+    \item \lstinline{include/}：存放所有共用的標頭檔與資料結構定義（如 \lstinline{instruction.h}, \lstinline{context.h}, \lstinline{stb_ds.h} 等），嚴格區分介面與實作。
+    \item \lstinline{examples/}：存放測試用的 SIC/XE 組合語言原始碼（\lstinline{.asm}）與預期產出的目的檔（\lstinline{.obj}），用於驗證系統的正確性。
+    \item \lstinline{docs/}：存放技術報告的 LaTeX 原始碼與相關圖片資源（如 \lstinline{fsm.jpg}）。
+    \item \lstinline{CMakeLists.txt} 與 \lstinline{build/}：定義跨平台的建置規則，並隔離編譯過程產生的暫存檔與最終可執行檔。
+\end{itemize}
+
+\section{核心模組與資料結構職責}
+系統的各個 \lstinline{.c} 與 \lstinline{.h} 檔案皆具備單一且明確的職責，模組間的相依關係如下：
+
+\subsection{程式進入點與核心控制}
+\begin{itemize}
+    \item \lstinline{main.c}：系統的進入點。負責解析命令列參數（如選擇標準 \lstinline{SIC} 或 \lstinline{SIC/XE} 模式），並呼叫組譯主程序。
+    \item \lstinline{assemble.c} / \lstinline{assemble.h}：實作組譯器的核心業務邏輯，精準控制 \lstinline{Pass 1} 與 \lstinline{Pass 2} 的執行流程，並處理目的檔（Object file）的格式化輸出（包含 \lstinline{H, T, M, E} 紀錄）。
+    \item \lstinline{context.h}：定義組譯過程中的全局狀態（Context），如當前的記憶體位置計數器（\lstinline{LOCCTR}）、基址暫存器（\lstinline{BASE}）狀態等。
+\end{itemize}
+
+\subsection{詞法分析與語法解析}
+\begin{itemize}
+    \item \lstinline{parse.c} / \lstinline{parse.h}：實作基於有限狀態機（FSM）的詞法分析器，負責將單行組合語言原始碼拆解為標籤、助記符與運算元。
+    \item \lstinline{instruction.h}：定義單行指令的資料結構（\lstinline{Instruction}），用以封裝解析後的指令內容、控制位元（\lstinline{n, i, x, b, p, e}）以及生成的機器碼。
+\end{itemize}
+
+\subsection{查表與演算法優化}
+\begin{itemize}
+    \item \lstinline{opcode.c} / \lstinline{opcode.h}：封裝 \lstinline{SIC/XE} 指令集表（\lstinline{OPTAB}），並提供基於二分搜尋法（Binary Search）的高效 \lstinline{Opcode} 查找介面。
+    \item \lstinline{symbol.h}：定義符號表（\lstinline{SYMTAB}）的結構，負責紀錄程式碼中定義的標籤與其對應的絕對記憶體位址。
+    \item \lstinline{stb_ds.h}：引入此輕量級的資料結構函式庫，為系統提供高效的「動態陣列（Dynamic Array）」以存儲無限量指令，以及「字串雜湊表（Hash Table）」以達到 $O(1)$ 的符號表查詢效能。
+\end{itemize}
+
+\section{組譯流程演算法（Two-Pass Logic）}
+在模組化架構的基礎上，本系統採用經典的兩次掃描（Two-Pass）演算法，以確保所有前向引用（Forward Reference）標籤皆能被正確解析。
+
+\begin{enumerate}
+    \item \textbf{Pass 1（位址分配與符號解析）}：\\
+          系統透過 \lstinline{parse.c} 逐行讀取 \lstinline{.asm} 檔，透過指令長度與假指令（如 \lstinline{RESW}, \lstinline{BYTE}）維護 \lstinline{LOCCTR}，並將所有標籤寫入基於 Hash Table 實作的符號表。此階段的結果將依序存入動態陣列中供後續使用。
+
+    \item \textbf{Pass 2（機器碼生成與輸出）}：\\
+          系統遍歷 Pass 1 生成的指令陣列，利用 \lstinline{opcode.c} 查詢指令對應的 \lstinline{Opcode}。接著結合符號表查詢目標位址，計算 \lstinline{PC-Relative} 或 \lstinline{Base-Relative} 的位移量（Displacement），最終組合出十六進位機器碼，並由 \lstinline{assemble.c} 輸出至 \lstinline{.obj} 檔案中。
+\end{enumerate}

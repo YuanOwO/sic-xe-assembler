@@ -1,0 +1,51 @@
+\chapter{程式執行與操作說明}
+
+本章節將說明如何使用 \lstinline{CMake} 建置本專案，以及編譯完成後，如何透過命令列介面（CLI）操作本組譯器並切換不同的執行模式。
+
+\section{專案建置與編譯}
+本專案採用跨平台的 \lstinline{CMake} 作為自動化建置工具，原始碼遵循 \lstinline{C11} 標準。請在專案的根目錄下開啟終端機，並依序執行以下指令進行編譯：
+
+\begin{lstlisting}[language=bash, caption={編譯專案指令}, frame=single]
+$ mkdir build
+$ cd build
+# 產生建置檔（可指定編譯模式，此處以 Release 為例）
+$ cmake -DCMAKE_BUILD_TYPE=Release ..
+# 執行編譯以產生可執行檔
+$ make
+\end{lstlisting}
+
+編譯成功後，系統將會在 \lstinline{build} 目錄下生成名為 \lstinline{main} 的可執行檔。
+
+\section{執行方式與命令列參數}
+為提升系統的靈活性與使用者體驗，本組譯器設計了完整的命令列參數解析機制，允許使用者靈活指定輸入、輸出檔案，以及切換底層的組譯模式。
+
+\subsection{基本語法}
+程式的執行語法如下：
+\begin{lstlisting}[language=bash, frame=single]
+$ ./main [options] <inputfile> [outputfile]
+\end{lstlisting}
+
+\subsection{可用選項}
+使用者可透過以下參數調整程式行為：
+\begin{itemize}
+    \item \lstinline{-h, --help}：顯示系統幫助訊息與參數說明，並安全退出程式。
+    \item \lstinline{-v, --version}：顯示組譯器版本資訊與開發者隱藏訊息（彩蛋），並退出程式。
+    \item \lstinline{-x, --xe}：將系統切換為 \lstinline{SIC/XE} 擴充模式進行組譯 \textbf{（此為系統預設模式）}。
+    \item \lstinline{-s, --sic}：將系統切換為標準 \lstinline{SIC} 模式進行組譯，此模式下將停用 \lstinline{Format 3/4} 等擴充特性。
+    \item \lstinline{<inputfile>}：必須提供的參數。指定欲組譯的組合語言原始碼檔案路徑（例如 \lstinline{../examples/textbooksicxe.asm}）。
+    \item \lstinline{[outputfile]}：選擇性參數。指定輸出的目的檔名稱。若使用者未指定，系統將自動以 \lstinline{output.obj} 作為預設輸出檔名。
+\end{itemize}
+
+\section{執行範例}
+以下提供幾種常見的實務操作情境：
+
+\begin{lstlisting}[language=bash, caption={執行範例}, frame=single]
+# 情境一：以預設的 XE 模式組譯，並明確指定輸出的目的檔名稱
+$ ./main -x ../examples/textbooksicxe.asm my_output.obj
+
+# 情境二：以標準 SIC 模式組譯，輸出檔名省略，讓系統使用預設值
+$ ./main -s ../examples/standard_sic.asm
+
+# 情境三：查詢系統版本與觸發彩蛋訊息
+$ ./main --version
+\end{lstlisting}

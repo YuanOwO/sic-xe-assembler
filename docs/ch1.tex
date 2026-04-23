@@ -1,0 +1,27 @@
+\chapter{專案簡介}
+
+\section{專案目標}
+
+本專案旨在實作一個基於 C11 標準的 SIC/XE 組合語言組譯器（Assembler）。
+其核心功能是將符合 SIC/XE 指令集架構的組合語言原始碼（\texttt{.asm}）轉換為計算機可執行之目的程式（\texttt{.obj}）。
+本實作不僅支援標準的 SIC 指令，亦支援 XE 架構的擴充功能，如 Format 4 指令、相對定址模式等。
+
+\section{核心特色}
+
+\begin{itemize}
+    \item \textbf{完整指令集支援}：支援 Format 1、2、3 及 4（前綴 \lstinline|+|）之指令解析。
+    \item \textbf{定址模式自動處理}：自動計算 PC 相對定址（PC-Relative）與 Base 相對定址（Base-Relative）之位
+          移量（Displacement）。
+    \item \textbf{嚴謹的語法解析}：採用有限狀態機（FSM）模型進行詞法分析，確保能精準捕捉 Label、Mnemonic 與 Operands，
+          並具備基礎語法錯誤偵測。
+    \item \textbf{跨平台建置}：使用 \texttt{CMake} 進行專案自動化建置，支援 Linux、macOS 與 Windows 環境。
+\end{itemize}
+
+\section{開發環境與工具}
+
+\begin{itemize}
+    \item \textbf{程式語言}：C（C11 標準）。
+    \item \textbf{建置系統}：CMake 4.1.1。
+    \item \textbf{編譯器}：GCC / Clang。
+    \item \textbf{關鍵資料結構庫}：使用 \texttt{stb\_ds.h} 實作高效能的動態陣列與雜湊表（Hash Map）。
+\end{itemize}

@@ -1,0 +1,18 @@
+\section{目的碼與目的檔生成}
+
+\lstinline{assemble.c} 負責將組譯結果格式化輸出。
+\begin{itemize}
+    \item \textbf{Head Record (H)}：
+          在目的檔的開頭寫入 H 紀錄，包含程式名稱、起始位址與程式長度等基本資訊。
+
+    \item \textbf{Text Record (T)}：
+          程式透過緩衝區收集相鄰的機器碼，當累積長度超過 30 個位元組（$1E_{16}$）
+          或遇到記憶體不連續（如 \lstinline{RESW}）時，即斷行寫入新的 T 紀錄。
+
+    \item \textbf{Modification Record (M)}：
+          對於採用 Format 4 且非立即數的指令（\lstinline{e=1}），
+          由於其包含絕對記憶體位址，必須在目的檔中生成 M 紀錄，以便後續的載入器（Loader）進行重定位（Relocation）。
+
+    \item \textbf{End Record (E)}：
+          在目的檔的結尾寫入 E 紀錄，指定程式的起始執行位址（Entry Point）。
+\end{itemize}
