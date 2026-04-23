@@ -4,6 +4,9 @@
 
 #include "assemble.h"
 
+/**
+ * 顯示版本信息
+ */
 void printVersion() {
     printf("SIC/XE Assembler v1.0.0\n");
     printf("\nThis assembler supports both SIC and XE modes. Use -h or --help for more information.\n");
@@ -12,22 +15,20 @@ void printVersion() {
     printf("🎵 Never gonna let you down\n");
     printf("🎵 Never gonna run around and desert you...\n");
 
-    // 跨平台直接開啟瀏覽器 Rickroll
-#ifdef _WIN32
-    // Windows
+#ifdef _WIN32  // Windows
     system("start https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-#elif __APPLE__
-    // macOS
+#elif __APPLE__  // macOS
     system("open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-#elif __linux__
-    // Linux
+#elif __linux__  // Linux
     system("xdg-open https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 #else
-    // 如果無法開啟瀏覽器，就 fallback 到文字版
     printf("Please visit: https://www.youtube.com/watch?v=dQw4w9WgXcQ\n");
 #endif
 }
 
+/**
+ * 顯示使用說明
+ */
 void printHelp(char* progName) {
     printf("Usage: %s [options] <inputfile> [outputfile]\n", progName);
     printf("\nOptions:\n");
@@ -43,6 +44,7 @@ int main(int argc, char* argv[]) {
     char* filename = NULL;  // 要讀取的文件名
     char* output = NULL;    // 輸出的文件名
 
+    // 解析命令行參數
     for (int i = 1; i < argc; i++) {
         // 簡單選項解析
         if (argv[i][0] == '-') {
@@ -60,13 +62,14 @@ int main(int argc, char* argv[]) {
                 printf("Unknown option: %s\n", argv[i]);
                 return 1;
             }
-        } else {  // 非選項參數，假設是文件名
+        } else {  // 非選項參數，應該是文件名
             if (filename == NULL) {
                 filename = argv[i];
             } else if (output == NULL) {
                 output = argv[i];
             } else {
                 printf("Too many arguments. Only input and output filenames are expected.\n");
+                printHelp(argv[0]);
                 return 1;
             }
         }

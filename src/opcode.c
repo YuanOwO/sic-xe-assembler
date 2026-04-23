@@ -81,6 +81,8 @@ const size_t OPTAB_SIZE = sizeof(OPTAB) / sizeof(OpcodeEntry);
 /**
  * 搜尋指令的 opcode
  *
+ * 由於 OPTAB 是按照助記符字母順序排序的，可以使用二分搜尋來提高搜尋效率。
+ *
  * @param mnemonic 指令助記符
  * @return int 指令在 OPTAB 中的索引，找不到則返回 0 (FALSE)
  */
@@ -102,6 +104,12 @@ size_t searchOpcode(char* mnemonic) {
     return 0;  // Not found
 }
 
+/**
+ * 根據索引獲取指令的詳細信息
+ *
+ * @param index 指令在 OPTAB 中的索引
+ * @return OpcodeEntry 指令的詳細信息，如果索引無效則返回空的 OpcodeEntry
+ */
 OpcodeEntry getOpcode(size_t index) {
     if (index <= 0 || index >= OPTAB_SIZE) {
         return OPTAB[0];  // 返回空的 OpcodeEntry

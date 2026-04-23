@@ -17,11 +17,20 @@ inline int isEndOfLine(char c) {
 }
 
 inline int isPrefixChar(char c) {
-    return c == '#' || c == '@' || c == '=';
+    return c == '#' || c == '@';
 }
 
 inline int isEmptyString(const char* str) {
     return str[0] == '\0';
 }
+
+////////////////////////////////////////
+
+inline int hasFlag(size_t flags, size_t flag) {
+    return (flags & flag) != 0;
+}
+void setFlag(size_t* flags, size_t flag);
+void resetFlag(size_t* flags, size_t flag);
+void clearFlags(size_t* flags);
 
 #endif  // UTILS_H
