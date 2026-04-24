@@ -1,13 +1,13 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define READ_BUFFER_SIZE 4096
+#define READ_BUFFER_SIZE 1024
 
 #define MAX_OBJCODE_LENGTH 10
 #define MAX_TRECORD_LENGTH 30
 #define MAX_LABEL_LENGTH 64
 #define MAX_MNEMONIC_LENGTH 16
-#define MAX_OPERAND_LENGTH 128
+#define MAX_OPERAND_LENGTH 256
 
 typedef unsigned char byte;
 

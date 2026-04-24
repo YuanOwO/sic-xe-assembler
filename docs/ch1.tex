@@ -25,3 +25,37 @@
     \item \textbf{編譯器}：GCC / Clang。
     \item \textbf{關鍵資料結構庫}：使用 \texttt{stb\_ds.h} 實作高效能的動態陣列與雜湊表（Hash Map）。
 \end{itemize}
+
+\section{系統規格與邊界限制}
+
+為確保組譯器在處理各種組合語言檔案時的穩定性，並防範潛在的緩衝區溢位（Buffer Overflow）等記憶體安全問題，本專案明確定義了系統的處理邊界，並制定了嚴謹的字元識別規範。
+
+\subsection{系統邊界條件}
+
+各項長度上限皆統一定義於 \lstinline{constants.h} 中，具體規格如下：
+
+\begin{itemize}
+    \item \textbf{單行讀取緩衝區（\lstinline{READ_BUFFER_SIZE}）}：
+          配置 1024 Bytes，確保能安全讀取包含極長註解的單行原始碼。
+    \item \textbf{標籤長度上限（\lstinline{MAX_LABEL_LENGTH}）}：
+          64 字元。
+    \item \textbf{助記符長度上限（\lstinline{MAX_MNEMONIC_LENGTH}）}：
+          16 字元。
+    \item \textbf{運算元長度上限（\lstinline{MAX_OPERAND_LENGTH}）}：
+          256 字元，足以應付極長的字串常數宣告（如 \lstinline{C'...'}）。
+    \item \textbf{T 紀錄長度上限（\lstinline{MAX_TRECORD_LENGTH}）}：
+          30 Bytes。
+          此數值嚴格遵循 SIC/XE 目的檔規範，確保單筆 Text Record 的機器碼長度不超過十六進位的 \lstinline{1E}。
+\end{itemize}
+
+\subsection{大小寫識別與處理}
+
+在詞法分析與符號建構的過程中，系統針對不同型別的語彙基元（Token）採取以下判定策略：
+
+\begin{itemize}
+    \item \textbf{標籤與符號（Label \& Symbol）}：
+          視為大小寫敏感（Case-sensitive）。
+          例如，標籤 \lstinline{LOOP} 與 \lstinline{loop} 會被符號表（\lstinline{SYMTAB}）視為兩個完全不同的獨立參照。
+    \item \textbf{助記符與假指令（Mnemonic \& Directives）}：
+          要求嚴格匹配 \lstinline{OPTAB} 中定義的大寫字元，以維持組合語言指令結構的統一性。
+\end{itemize}

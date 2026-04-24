@@ -131,10 +131,16 @@
 
 \begin{figure}[htbp]
     \begin{center}
-        \includegraphics[width=0.8\textwidth]{docs/fsm.jpg}
+        \includegraphics[width=0.8\textwidth]{docs/nfa.jpg}
         \caption{有限狀態機（FSM）狀態轉移圖示。}
         \label{fig:fsm}
     \end{center}
 
-    其中 $Wt$ 代表等待（Wait），$Pre$ 代表前綴（Prefix），$Mnem, Mn$ 代表助記符（Mnemonic），$Op$ 代表運算元（Operand）。
+    其中 $Wt$ 代表等待（Wait），$Pre$ 代表前綴（Prefix），
+    $Mnem, Mn$ 代表助記符（Mnemonic），$Op$ 代表運算元（Operand）。
+
+    Alpha 代表字母，alnum 代表字母或數字，blank 代表空白字元（包含 tab 和空格），END 代表行尾（EOL）或註解。
+
+    由於讓狀態轉移更容易讀，我們將開頭到 mnemonic 之間的狀態以 NFA 的形式呈現；
+    而不合法的字元則直接轉到 error 狀態，這些轉移在圖中未標示出來。
 \end{figure}

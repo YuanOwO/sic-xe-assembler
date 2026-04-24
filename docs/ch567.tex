@@ -12,10 +12,10 @@
 \section{語意與邏輯錯誤檢查}
 除了語法層面，\lstinline{assemble.c} 亦實作了嚴格的語意檢查：
 \begin{itemize}
-    \item \textbf{未定義符號 (Undefined Symbol)}：
+    \item \textbf{未定義符號（Undefined Symbol）}：
           在 \lstinline{Pass 2} 階段，若運算元參考了不存在於符號表 (\lstinline{SYMTAB}) 中的標籤，
           系統將會報錯並終止該行機器碼的生成。
-    \item \textbf{位移越界 (Displacement Out of Bounds)}：
+    \item \textbf{位移越界（Displacement Out of Bounds）}：
           當 \lstinline{Format 3} 指令無法使用 \lstinline{PC-Relative} (超出 $-2048 \sim 2047$ 範圍)
           且無法使用 \lstinline{Base-Relative} 時，系統會主動提示開發者將該指令改寫為 \lstinline{Format 4}。
 \end{itemize}
